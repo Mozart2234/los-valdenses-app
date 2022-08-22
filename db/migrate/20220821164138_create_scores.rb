@@ -17,6 +17,7 @@ class CreateScores < ActiveRecord::Migration[7.0]
       t.integer :points_against
       t.integer :total
       t.references :group, index: true
+      t.references :user, index: true
       t.date :date_at
 
       t.timestamps

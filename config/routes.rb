@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-  get 'hello_world', to: 'hello_world#index'
   devise_for :admin_users, ActiveAdmin::Devise.config
   ActiveAdmin.routes(self)
   devise_for :users
@@ -9,4 +8,7 @@ Rails.application.routes.draw do
   # root "articles#index"
 
   root to: "home#index"
+  namespace :v1 do
+    resources :scores, only: [:create]
+  end
 end

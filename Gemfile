@@ -57,6 +57,7 @@ gem "sass-rails", "~> 6.0"
 
 gem "shakapacker", "= 6.5"
 
+gem 'jsonapi-serializer', '~> 2.2'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -82,3 +83,5 @@ group :test do
 end
 
 gem "react_on_rails", "= 13.1"
+
+gem "rack-cors", "~> 1.1"

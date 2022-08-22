@@ -63,10 +63,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_21_164138) do
     t.integer "points_against"
     t.integer "total"
     t.bigint "group_id"
+    t.bigint "user_id"
     t.date "date_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["group_id"], name: "index_scores_on_group_id"
+    t.index ["user_id"], name: "index_scores_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
