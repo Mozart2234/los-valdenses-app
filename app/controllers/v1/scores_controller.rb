@@ -1,12 +1,18 @@
 class V1::ScoresController < ApplicationController
   def create
-    @score = Score.new(score_params)
+    score = Score.new(score_params)
 
-    if @score.save
-      render json: ScoreSerializer.new(@score).serializable_hash, status: :created
+    if score.save
+      render json: score, serializer: ScoreSerializer, status: :created
     else
-      render json: @score.errors, status: :bad_request
+      render json: score.errors, status: :bad_request
     end
+  end
+
+  def index
+    scores = Score.all
+
+    render json: scores, each_serializer: ScoreSerializer
   end
 
   private

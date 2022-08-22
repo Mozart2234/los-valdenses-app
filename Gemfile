@@ -57,11 +57,11 @@ gem "sass-rails", "~> 6.0"
 
 gem "shakapacker", "= 6.5"
 
-gem 'jsonapi-serializer', '~> 2.2'
-
 gem "rack-cors", "~> 1.1"
 
 gem "react_on_rails", "= 13.1"
+
+gem 'active_model_serializers', '~> 0.10.13'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
@@ -85,3 +85,5 @@ group :test do
   gem "selenium-webdriver"
   gem "webdrivers"
 end
+
+gem "annotate", "~> 3.2"

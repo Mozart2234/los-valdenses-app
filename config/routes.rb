@@ -9,6 +9,6 @@ Rails.application.routes.draw do
 
   root to: "home#index"
   namespace :v1 do
-    resources :scores, only: [:create]
+    resources :scores, only: [:create, :index]
   end
 end
