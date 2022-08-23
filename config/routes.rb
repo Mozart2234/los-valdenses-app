@@ -13,5 +13,6 @@ Rails.application.routes.draw do
     resources :groups, only: [:index]
   end
 
-  resources :scores, only: [:new]
+  resources :scores, only: [:index, :edit, :new]
+  resources :stats, only: [:index]
 end

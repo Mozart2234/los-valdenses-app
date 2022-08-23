@@ -8,6 +8,9 @@
 #  updated_at :datetime         not null
 #
 class GroupSerializer < ActiveModel::Serializer
-  attributes :id, 
-             :name
+  attributes :id, :name
+
+  def name
+    object.name.capitalize
+  end
 end

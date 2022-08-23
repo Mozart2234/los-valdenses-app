@@ -1,5 +1,5 @@
 import PropTypes from "prop-types";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Layout from "../Layout";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
@@ -8,10 +8,20 @@ import Autocomplete from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import { useForm, Controller } from "react-hook-form";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import axios from "axios";
 
-const FormScore = (props) => {
-  const { control, handleSubmit, watch } = useForm({
+const FormScore = () => {
+  const [groups, setGroups] = useState([]);
+
+  const {
+    control,
+    handleSubmit,
+    setError,
+    formState: { errors, isValid: isFormValid, isDirty },
+  } = useForm({
     defaultValues: {
       group_id: undefined,
       pathfinder: 0,
@@ -29,15 +39,32 @@ const FormScore = (props) => {
       favor_score: 0,
       points_against: 0,
       total: 0,
-      date_at: 0
-    }  
+      date_at: new Date(),
+    },
   });
+
+  useEffect(() => {
+    axios
+      .get("/v1/groups")
+      .then((res) => {
+        setGroups(res.data);
+      })
+      .catch((err) => console.log(err));
+  }, []);
+
+  console.log("Errors", errors);
+
+  const isValid = Object.keys(errors).length === 0 && isFormValid;
+
   const onSubmit = async (data) => {
     try {
-      const response = await axios.post("/v1/scores", { score: data });
-      console.log(response);
+      await axios.post("/v1/scores", { score: data });
     } catch (error) {
       console.log(error);
+      const errors = error.response.data;
+      Object.keys(errors).forEach((key) => {
+        setError(key, { type: "server", message: errors[key].join(",") });
+      });
     }
   };
 
@@ -55,12 +82,61 @@ const FormScore = (props) => {
         }}
         onSubmit={handleSubmit(onSubmit)}
       >
-        <Autocomplete
-          required
-          disablePortal
-          options={groups}
-          renderInput={(params) => <TextField {...params} label="Grupo" />}
+        <Controller
+          name="group_id"
+          control={control}
+          render={({ field: { ref, onChange, ...field } }) => (
+            <Autocomplete
+              required
+              disablePortal
+              options={groups}
+              getOptionLabel={(option) => option.name}
+              onChange={(_, data) => {
+                onChange(data.id);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  inputRef={ref}
+                  {...params}
+                  {...field}
+                  label="Grupo"
+                  error={!!errors?.group_id}
+                  helperText={errors?.group_id?.message}
+                />
+              )}
+            />
+          )}
         />
+
+        <Box>
+          <Controller
+            name="date_at"
+            control={control}
+            render={({ field: { ref, onChange, ...field } }) => (
+              <LocalizationProvider dateAdapter={AdapterDateFns}>
+                <DatePicker
+                  required
+                  label="Fecha de registro"
+                  onChange={(value) => {
+                    onChange(value);
+                  }}
+                  value={field.value}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      {...field}
+                      inputRef={ref}
+                      fullWidth
+                      error={!!errors?.date_at}
+                      helperText={errors?.date_at?.message}
+                    />
+                  )}
+                />
+              </LocalizationProvider>
+            )}
+          />
+        </Box>
+
         <Typography variant="h6" gutterBottom>
           Puntualidad
         </Typography>
@@ -72,10 +148,12 @@ const FormScore = (props) => {
               render={({ field }) => (
                 <TextField
                   {...field}
+                  error={!!errors?.pathfinder}
                   required
                   fullWidth
                   label="Conquistadores"
                   type="number"
+                  helperText={errors?.pathfinder?.message}
                   inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                 />
               )}
@@ -88,10 +166,12 @@ const FormScore = (props) => {
               render={({ field }) => (
                 <TextField
                   {...field}
+                  error={!!errors?.counselor}
                   required
                   fullWidth
                   label="Consejeros"
                   type="number"
+                  helperText={errors?.counselor?.message}
                   inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                 />
               )}
@@ -104,14 +184,16 @@ const FormScore = (props) => {
         <Grid container spacing={2}>
           <Grid item xs={6}>
             <Controller
-              name="counselor"
+              name="flag"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
                   required
+                  error={!!errors?.flag}
+                  helperText={errors?.flag?.message}
                   fullWidth
-                  label="Consejeros"
+                  label="Bordon"
                   type="number"
                   inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                 />
@@ -120,11 +202,13 @@ const FormScore = (props) => {
           </Grid>
           <Grid item xs={6}>
             <Controller
-              name="counselor"
+              name="uniform"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
+                  error={!!errors?.uniform}
+                  helperText={errors?.uniform?.message}
                   required
                   fullWidth
                   label="Uniforme"
@@ -135,13 +219,18 @@ const FormScore = (props) => {
             />
           </Grid>
         </Grid>
+        <Typography variant="h6" gutterBottom>
+          Otros
+        </Typography>
         <Controller
-          name="counselor"
+          name="bible_study"
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               required
+              error={!!errors?.bible_study}
+              helperText={errors?.bible_study?.message}
               fullWidth
               label="Clases Biblicas"
               type="number"
@@ -152,12 +241,14 @@ const FormScore = (props) => {
         <Grid container spacing={2}>
           <Grid item xs={4}>
             <Controller
-              name="counselor"
+              name="formation_1"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
                   required
+                  error={!!errors?.formation_1}
+                  helperText={errors?.formation_1?.message}
                   fullWidth
                   label="Formacion 1"
                   type="number"
@@ -168,12 +259,14 @@ const FormScore = (props) => {
           </Grid>
           <Grid item xs={4}>
             <Controller
-              name="counselor"
+              name="formation_2"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
                   required
+                  error={!!errors?.formation_2}
+                  helperText={errors?.formation_2?.message}
                   fullWidth
                   label="Formacion 1"
                   type="number"
@@ -184,12 +277,14 @@ const FormScore = (props) => {
           </Grid>
           <Grid item xs={4}>
             <Controller
-              name="counselor"
+              name="formation_3"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
                   required
+                  error={!!errors?.formation_3}
+                  helperText={errors?.formation_3?.message}
                   fullWidth
                   label="Formacion 3"
                   type="number"
@@ -200,13 +295,15 @@ const FormScore = (props) => {
           </Grid>
         </Grid>
         <Controller
-          name="counselor"
+          name="bonus"
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               required
               fullWidth
+              error={!!errors?.bonus}
+              helperText={errors?.bonus?.message}
               label="Bonus Track"
               type="number"
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
@@ -217,13 +314,15 @@ const FormScore = (props) => {
           Puntos en contra
         </Typography>
         <Controller
-          name="counselor"
+          name="small_fault"
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               required
               fullWidth
+              error={!!errors?.small_fault}
+              helperText={errors?.small_fault?.message}
               label="Faltas leves"
               type="number"
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
@@ -231,13 +330,15 @@ const FormScore = (props) => {
           )}
         />
         <Controller
-          name="counselor"
+          name="moderate_fault"
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               required
               fullWidth
+              error={!!errors?.moderate_fault}
+              helperText={errors?.moderate_fault?.message}
               label="Faltas moderadas"
               type="number"
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
@@ -245,20 +346,26 @@ const FormScore = (props) => {
           )}
         />
         <Controller
-          name="counselor"
+          name="serious_fault"
           control={control}
           render={({ field }) => (
             <TextField
               {...field}
               required
               fullWidth
+              error={!!errors?.serious_fault}
+              helperText={errors?.serious_fault?.message}
               label="Faltas graves"
               type="number"
               inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
             />
           )}
         />
-        <Button variant="contained" type="submit">
+        <Button
+          variant="contained"
+          type="submit"
+          disabled={!isDirty || !isValid}
+        >
           Crear
         </Button>
       </Box>
@@ -271,9 +378,3 @@ FormScore.propTypes = {
 };
 
 export default FormScore;
-
-const groups = [
-  { label: "The Shawshank Redemption", year: 1994 },
-  { label: "The Godfather", year: 1972 },
-  { label: "The Godfather: Part II", year: 1974 },
-];
