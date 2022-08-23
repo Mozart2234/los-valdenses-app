@@ -1,4 +1,4 @@
-class V1::ScoresController < ApplicationController
+class V1::ScoresController < V1::BaseController
   def create
     score = Score.new(score_params)
 
@@ -39,4 +39,3 @@ class V1::ScoresController < ApplicationController
     )
   end
 end
-

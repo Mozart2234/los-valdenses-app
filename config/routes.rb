@@ -10,5 +10,8 @@ Rails.application.routes.draw do
   root to: "home#index"
   namespace :v1 do
     resources :scores, only: [:create, :index]
+    resources :groups, only: [:index]
   end
+
+  resources :scores, only: [:new]
 end

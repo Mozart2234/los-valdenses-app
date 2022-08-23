@@ -25,5 +25,5 @@
 #  updated_at     :datetime         not null
 #
 class Score < ApplicationRecord
-  
+  validates :pathfinder, presence: true, numericality: { only_integer: true, greater_than: 0 }
 end

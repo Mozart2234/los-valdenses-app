@@ -25,7 +25,8 @@
 #  updated_at     :datetime         not null
 #
 class ScoreSerializer < ActiveModel::Serializer
-  attributes :pathfinder, 
+  attributes :id,
+             :pathfinder, 
              :counselor, 
              :flag, 
              :uniform, 
