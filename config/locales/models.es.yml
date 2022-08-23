@@ -4,8 +4,33 @@ es:
       group:
         one: Grupo
         other: Grupos
+      user:
+        one: Usuario
+        other: Usuarios
+      score:
+        one: Puntaje
+        other: Puntajes
     attributes:
       group:
         name: Nombre
+        created_at: Creado en
+        updated_at: Actualizado en
+      score:
+        pathfinder: "Conquistador"
+        counselor: "Consejero"
+        flag: "Bordon"     
+        uniform: "Uniforme"    
+        bible_study: "Estudio Biblico"
+        formation_1: "Formacion 1"
+        formation_2: "Formacion 2"
+        formation_3: "Formacion 3"
+        bonus: "Bonus Track"
+        small_fault: "Faltas Pequeñas"    
+        moderate_fault: "Faltas Moderadas"
+        serious_fault: "Faltas Moderadas"
+        favor_score: "Puntos a Favor"
+        points_against: "Puntos en contra"
+        total: "Total"
+        date_at: "Fecha de registro"
         created_at: Creado en
         updated_at: Actualizado en
