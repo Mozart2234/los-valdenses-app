@@ -1,0 +1,11 @@
+es:
+  activerecord:
+    models:
+      group:
+        one: Grupo
+        other: Grupos
+    attributes:
+      group:
+        name: Nombre
+        created_at: Creado en
+        updated_at: Actualizado en
