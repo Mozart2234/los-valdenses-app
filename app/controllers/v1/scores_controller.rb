@@ -1,7 +1,6 @@
 class V1::ScoresController < V1::BaseController
   def create
-    score = Score.new(score_params)
-
+    score = current_user.scores.new(score_params)
     if score.save
       render json: score, serializer: ScoreSerializer, status: :created
     else

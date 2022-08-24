@@ -25,6 +25,9 @@
 #  updated_at     :datetime         not null
 #
 class Score < ApplicationRecord
+  belongs_to :group, optional: true
+  belongs_to :user, optional: true
+
   validates :pathfinder, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :counselor, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :flag, presence: true, numericality: { only_integer: true, greater_than: 0 }
@@ -37,7 +40,7 @@ class Score < ApplicationRecord
   validates :small_fault, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :moderate_fault, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :serious_fault, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :date_at, presence: true, uniqueness: { scope: :group, message: "El grupo ya tiene un registro en la misma fecha" }
   validates :group_id, presence: true
-  
-  belongs_to :group, optional: true
+  validates :user_id, presence: true
 end

@@ -1,6 +1,6 @@
 if Rails.env.development?
   ## Admin User
-  AdminUser.find_or_create_by!(email: 'admin@example.com') do |user|
+  User.find_or_create_by!(email: 'admin@example.com') do |user|
     user.password = 'password'
     user.password_confirmation = 'password'
   end
@@ -23,4 +23,3 @@ groups = [
 groups.each do |name|
   Group.find_or_create_by!(name: name)
 end
-

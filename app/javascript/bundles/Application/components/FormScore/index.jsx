@@ -7,40 +7,51 @@ import Grid from "@mui/material/Grid";
 import Autocomplete from "@mui/material/Autocomplete";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import Alert from "@mui/material/Alert";
 import { useForm, Controller } from "react-hook-form";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import Snackbar from "@mui/material/Snackbar";
 import axios from "axios";
+
+const DEFAULT_VALUES = {
+  group_id: undefined,
+  pathfinder: 0,
+  counselor: 0,
+  flag: 0,
+  uniform: 0,
+  bible_study: 0,
+  formation_1: 0,
+  formation_2: 0,
+  formation_3: 0,
+  bonus: 0,
+  small_fault: 0,
+  moderate_fault: 0,
+  serious_fault: 0,
+  favor_score: 0,
+  points_against: 0,
+  total: 0,
+  date_at: new Date(),
+}
 
 const FormScore = () => {
   const [groups, setGroups] = useState([]);
+  const [snackbar, setSnackbar] = useState({
+    message: "",
+    isOpen: false,
+    status: "",
+  });
+
 
   const {
     control,
     handleSubmit,
     setError,
+    reset,
     formState: { errors, isValid: isFormValid, isDirty },
   } = useForm({
-    defaultValues: {
-      group_id: undefined,
-      pathfinder: 0,
-      counselor: 0,
-      flag: 0,
-      uniform: 0,
-      bible_study: 0,
-      formation_1: 0,
-      formation_2: 0,
-      formation_3: 0,
-      bonus: 0,
-      small_fault: 0,
-      moderate_fault: 0,
-      serious_fault: 0,
-      favor_score: 0,
-      points_against: 0,
-      total: 0,
-      date_at: new Date(),
-    },
+    defaultValues: DEFAULT_VALUES,
   });
 
   useEffect(() => {
@@ -59,13 +70,25 @@ const FormScore = () => {
   const onSubmit = async (data) => {
     try {
       await axios.post("/v1/scores", { score: data });
+      setSnackbar({status: "success", isOpen: true, message: "Puntaje guardado"});
+      reset({
+        data: DEFAULT_VALUES
+      })
     } catch (error) {
-      console.log(error);
+      setSnackbar({status: "error", isOpen: true, message: "Ocurrio un error registrar el puntaje"});
       const errors = error.response.data;
       Object.keys(errors).forEach((key) => {
         setError(key, { type: "server", message: errors[key].join(",") });
       });
     }
+  };
+
+  const handleClose = (_, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSnackbar({...snackbar, isOpen: false});
   };
 
   return (
@@ -369,6 +392,14 @@ const FormScore = () => {
           Crear
         </Button>
       </Box>
+      <Snackbar
+        open={snackbar.isOpen}
+        autoHideDuration={6000}
+      >
+        <Alert onClose={handleClose} severity={snackbar.status} sx={{ width: "100%" }}>
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Layout>
   );
 };
