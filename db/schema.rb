@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_23_225345) do
+ActiveRecord::Schema[7.0].define(version: 2022_08_24_164951) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -28,6 +28,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_23_225345) do
     t.index ["resource_type", "resource_id"], name: "index_active_admin_comments_on_resource"
   end
 
+  create_table "feature_flags", force: :cascade do |t|
+    t.string "name"
+    t.string "var_name"
+    t.boolean "is_active"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "groups", force: :cascade do |t|
     t.string "name"
     t.datetime "created_at", null: false
@@ -40,9 +48,15 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_23_225345) do
     t.integer "flag"
     t.integer "uniform"
     t.integer "bible_study"
-    t.integer "formation_1"
-    t.integer "formation_2"
-    t.integer "formation_3"
+    t.integer "event_1"
+    t.integer "event_2"
+    t.integer "event_3"
+    t.integer "initial_formation"
+    t.integer "unit_corner_formation"
+    t.integer "progressive_classes_formation"
+    t.integer "specialties_formation"
+    t.integer "events_formation"
+    t.integer "final_formation"
     t.integer "bonus"
     t.integer "small_fault"
     t.integer "moderate_fault"

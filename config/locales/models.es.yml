@@ -21,9 +21,15 @@ es:
         flag: "Bordon"     
         uniform: "Uniforme"    
         bible_study: "Estudio Biblico"
-        formation_1: "Formacion 1"
-        formation_2: "Formacion 2"
-        formation_3: "Formacion 3"
+        event_1: Evento 1
+        event_2: Evento 2
+        event_3: Evento 3
+        initial_formation: Formacion inicial,
+        unit_corner_formation: Formacion rincón de unidades
+        progressive_classes_formation: Formacion clases progresivas
+        specialties_formation: Formacion especialidades
+        events_formation: Formacion eventos
+        final_formation: Formacion finalizar
         bonus: "Bonus Track"
         small_fault: "Faltas Pequeñas"    
         moderate_fault: "Faltas Moderadas"

@@ -22,9 +22,15 @@ const DEFAULT_VALUES = {
   flag: 0,
   uniform: 0,
   bible_study: 0,
-  formation_1: 0,
-  formation_2: 0,
-  formation_3: 0,
+  initial_formation: 0,
+  unit_corner_formation: 0,
+  progressive_classes_formation: 0,
+  specialties_formation: 0,
+  events_formation: 0,
+  final_formation: 0,
+  event_1: 0,
+  event_2: 0,
+  event_3: 0,
   bonus: 0,
   small_fault: 0,
   moderate_fault: 0,
@@ -33,9 +39,9 @@ const DEFAULT_VALUES = {
   points_against: 0,
   total: 0,
   date_at: new Date(),
-}
+};
 
-const FormScore = () => {
+const FormScore = ({ featureFlags }) => {
   const [groups, setGroups] = useState([]);
   const [snackbar, setSnackbar] = useState({
     message: "",
@@ -43,16 +49,27 @@ const FormScore = () => {
     status: "",
   });
 
+  const permitsCreateOutDate = featureFlags.includes("permits_create_out_date");
 
   const {
     control,
     handleSubmit,
     setError,
     reset,
+    watch,
     formState: { errors, isValid: isFormValid, isDirty },
   } = useForm({
     defaultValues: DEFAULT_VALUES,
   });
+
+  const today = new Date();
+  const isWeekDay = ![0,6].includes(today.getDay())
+
+  const { date_at: dateAt } = watch()
+  let dayNumber = permitsCreateOutDate ? new Date(dateAt).getDay() : today.getDay();
+
+  const isSunday = dayNumber == 0;
+  const isSaturday = dayNumber == 6;
 
   useEffect(() => {
     axios
@@ -63,19 +80,25 @@ const FormScore = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  console.log("Errors", errors);
-
   const isValid = Object.keys(errors).length === 0 && isFormValid;
 
   const onSubmit = async (data) => {
     try {
       await axios.post("/v1/scores", { score: data });
-      setSnackbar({status: "success", isOpen: true, message: "Puntaje guardado"});
+      setSnackbar({
+        status: "success",
+        isOpen: true,
+        message: "Puntaje guardado",
+      });
       reset({
-        data: DEFAULT_VALUES
-      })
+        data: DEFAULT_VALUES,
+      });
     } catch (error) {
-      setSnackbar({status: "error", isOpen: true, message: "Ocurrio un error registrar el puntaje"});
+      setSnackbar({
+        status: "error",
+        isOpen: true,
+        message: "Ocurrio un error registrar el puntaje",
+      });
       const errors = error.response.data;
       Object.keys(errors).forEach((key) => {
         setError(key, { type: "server", message: errors[key].join(",") });
@@ -88,8 +111,20 @@ const FormScore = () => {
       return;
     }
 
-    setSnackbar({...snackbar, isOpen: false});
+    setSnackbar({ ...snackbar, isOpen: false });
   };
+
+  const disabledWeekDays = (date) => {
+    return ![0,6].includes(date.getDay())
+  }
+
+  if (isWeekDay && !permitsCreateOutDate) {
+    return (
+      <Layout>
+        <Alert severity="info">No es posible crear registros en dias de la semana</Alert>
+      </Layout>
+    )
+  }
 
   return (
     <Layout>
@@ -130,35 +165,38 @@ const FormScore = () => {
             />
           )}
         />
-
-        <Box>
-          <Controller
-            name="date_at"
-            control={control}
-            render={({ field: { ref, onChange, ...field } }) => (
-              <LocalizationProvider dateAdapter={AdapterDateFns}>
-                <DatePicker
-                  required
-                  label="Fecha de registro"
-                  onChange={(value) => {
-                    onChange(value);
-                  }}
-                  value={field.value}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      {...field}
-                      inputRef={ref}
-                      fullWidth
-                      error={!!errors?.date_at}
-                      helperText={errors?.date_at?.message}
-                    />
-                  )}
-                />
-              </LocalizationProvider>
-            )}
-          />
-        </Box>
+        {permitsCreateOutDate && (
+          <Box>
+            <Controller
+              name="date_at"
+              control={control}
+              render={({ field: { ref, onChange, ...field } }) => (
+                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                  <DatePicker
+                    required
+                    label="Fecha de registro"
+                    onChange={(value) => {
+                      onChange(value);
+                    }}
+                    value={field.value}
+                    disableFuture
+                    shouldDisableDate={disabledWeekDays}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        {...field}
+                        inputRef={ref}
+                        fullWidth
+                        error={!!errors?.date_at}
+                        helperText={errors?.date_at?.message}
+                      />
+                    )}
+                  />
+                </LocalizationProvider>
+              )}
+            />
+          </Box>
+        )}
 
         <Typography variant="h6" gutterBottom>
           Puntualidad
@@ -242,38 +280,95 @@ const FormScore = () => {
             />
           </Grid>
         </Grid>
-        <Typography variant="h6" gutterBottom>
-          Otros
-        </Typography>
-        <Controller
-          name="bible_study"
-          control={control}
-          render={({ field }) => (
-            <TextField
-              {...field}
-              required
-              error={!!errors?.bible_study}
-              helperText={errors?.bible_study?.message}
-              fullWidth
-              label="Clases Biblicas"
-              type="number"
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
-            />
-          )}
-        />
+        {isSaturday && (
+          <Controller
+            name="bible_study"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                required
+                error={!!errors?.bible_study}
+                helperText={errors?.bible_study?.message}
+                fullWidth
+                label="Clases Biblicas"
+                type="number"
+                inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+              />
+            )}
+          />
+        )}
+        {isSunday && (
+          <Grid container spacing={2}>
+            <Grid item xs={4}>
+              <Controller
+                name="event_1"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    required
+                    error={!!errors?.event_1}
+                    helperText={errors?.event_1?.message}
+                    fullWidth
+                    label="Evento 1"
+                    type="number"
+                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <Controller
+                name="event_2"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    required
+                    error={!!errors?.event_2}
+                    helperText={errors?.event_2?.message}
+                    fullWidth
+                    label="Evento 2"
+                    type="number"
+                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                  />
+                )}
+              />
+            </Grid>
+            <Grid item xs={4}>
+              <Controller
+                name="event_3"
+                control={control}
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    required
+                    error={!!errors?.event_3}
+                    helperText={errors?.event_3?.message}
+                    fullWidth
+                    label="Evento 3"
+                    type="number"
+                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                  />
+                )}
+              />
+            </Grid>
+          </Grid>
+        )}
         <Grid container spacing={2}>
           <Grid item xs={4}>
             <Controller
-              name="formation_1"
+              name="initial_formation"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
                   required
-                  error={!!errors?.formation_1}
-                  helperText={errors?.formation_1?.message}
+                  error={!!errors?.initial_formation}
+                  helperText={errors?.initial_formation?.message}
                   fullWidth
-                  label="Formacion 1"
+                  label="Formacion inicial"
                   type="number"
                   inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                 />
@@ -282,16 +377,16 @@ const FormScore = () => {
           </Grid>
           <Grid item xs={4}>
             <Controller
-              name="formation_2"
+              name="unit_corner_formation"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
                   required
-                  error={!!errors?.formation_2}
-                  helperText={errors?.formation_2?.message}
+                  error={!!errors?.unit_corner_formation}
+                  helperText={errors?.unit_corner_formation?.message}
                   fullWidth
-                  label="Formacion 1"
+                  label="Formacion rincón de unidades"
                   type="number"
                   inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                 />
@@ -300,16 +395,16 @@ const FormScore = () => {
           </Grid>
           <Grid item xs={4}>
             <Controller
-              name="formation_3"
+              name="progressive_classes_formation"
               control={control}
               render={({ field }) => (
                 <TextField
                   {...field}
                   required
-                  error={!!errors?.formation_3}
-                  helperText={errors?.formation_3?.message}
+                  error={!!errors?.progressive_classes_formation}
+                  helperText={errors?.progressive_classes_formation?.message}
                   fullWidth
-                  label="Formacion 3"
+                  label="Formacion clases progresivas"
                   type="number"
                   inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
                 />
@@ -317,6 +412,65 @@ const FormScore = () => {
             />
           </Grid>
         </Grid>
+        <Grid container spacing={2}>
+          <Grid item xs={4}>
+            <Controller
+              name="specialties_formation"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  required
+                  error={!!errors?.specialties_formation}
+                  helperText={errors?.specialties_formation?.message}
+                  fullWidth
+                  label="Formacion para especialidades"
+                  type="number"
+                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <Controller
+              name="events_formation"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  required
+                  error={!!errors?.events_formation}
+                  helperText={errors?.events_formation?.message}
+                  fullWidth
+                  label="Formacion para eventos"
+                  type="number"
+                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                />
+              )}
+            />
+          </Grid>
+          <Grid item xs={4}>
+            <Controller
+              name="final_formation"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  required
+                  error={!!errors?.final_formation}
+                  helperText={errors?.final_formation?.message}
+                  fullWidth
+                  label="Formacion final"
+                  type="number"
+                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*" }}
+                />
+              )}
+            />
+          </Grid>
+        </Grid>
+        <Typography variant="h6" gutterBottom>
+          Otros
+        </Typography>
         <Controller
           name="bonus"
           control={control}
@@ -392,11 +546,12 @@ const FormScore = () => {
           Crear
         </Button>
       </Box>
-      <Snackbar
-        open={snackbar.isOpen}
-        autoHideDuration={6000}
-      >
-        <Alert onClose={handleClose} severity={snackbar.status} sx={{ width: "100%" }}>
+      <Snackbar open={snackbar.isOpen} autoHideDuration={6000}>
+        <Alert
+          onClose={handleClose}
+          severity={snackbar.status}
+          sx={{ width: "100%" }}
+        >
           {snackbar.message}
         </Alert>
       </Snackbar>
@@ -405,7 +560,7 @@ const FormScore = () => {
 };
 
 FormScore.propTypes = {
-  name: PropTypes.string.isRequired, // this is passed from the Rails view
+  featureFlags: PropTypes.array.isRequired, // this is passed from the Rails view
 };
 
 export default FormScore;
