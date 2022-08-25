@@ -5,7 +5,6 @@ import ScoreList from '../bundles/Application/components/ScoreList';
 import axios from 'axios';
 
 
-// This is how react_on_rails can see the HelloWorld in the browser.
 ReactOnRails.register({
   FormScore,
   ScoreList
