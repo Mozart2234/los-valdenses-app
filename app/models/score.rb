@@ -25,27 +25,50 @@
 #  updated_at     :datetime         not null
 #
 class Score < ApplicationRecord
+  attribute :pathfinder, default: 0
+  attribute :counselor, default: 0
+  attribute :flag, default: 0
+  attribute :uniform, default: 0
+  attribute :bible_study, default: 0
+  attribute :event_1, default: 0
+  attribute :event_2, default: 0
+  attribute :event_3, default: 0
+  attribute :initial_formation, default: 0
+  attribute :unit_corner_formation, default: 0
+  attribute :progressive_classes_formation, default: 0
+  attribute :specialties_formation, default: 0
+  attribute :events_formation, default: 0
+  attribute :final_formation, default: 0
+  attribute :bonus, default: 0
+  attribute :small_fault, default: 0
+  attribute :moderate_fault, default: 0
+  attribute :serious_fault, default: 0
+  attribute :moderate_fault, default: 0
+  attribute :favor_score, default: 0
+  attribute :points_against, default: 0
+  attribute :total, default: 0
+
   belongs_to :group, optional: true
   belongs_to :user, optional: true
 
-  validates :pathfinder, presence: true, numericality: { only_integer: true, greater_than: 0 }
-  validates :counselor, presence: true, numericality: { only_integer: true, greater_than: 0 }
-  validates :flag, presence: true, numericality: { only_integer: true, greater_than: 0 }
-  validates :uniform, presence: true, numericality: { only_integer: true, greater_than: 0 }
-  validates :bible_study, presence: true, numericality: { only_integer: true, greater_than: 0 }
-  validates :event_1, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_sunday?
-  validates :event_2, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_sunday?
-  validates :event_3, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_sunday?
-  validates :initial_formation, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_saturday?
-  validates :unit_corner_formation, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_saturday?
-  validates :progressive_classes_formation, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_saturday?
-  validates :specialties_formation, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_saturday?
-  validates :events_formation, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_saturday?
-  validates :final_formation, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_saturday?
-  validates :bonus, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :small_fault, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :moderate_fault, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
-  validates :serious_fault, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :pathfinder, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :counselor, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :flag, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :uniform, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :bible_study, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :event_1, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_sunday?
+  validates :event_2, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_sunday?
+  validates :event_3, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_sunday?
+  validates :initial_formation, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_saturday?
+  validates :unit_corner_formation, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_saturday?
+  validates :progressive_classes_formation, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_saturday?
+  validates :specialties_formation, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_saturday?
+  validates :events_formation, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_saturday?
+  validates :final_formation, numericality: { only_integer: true, greater_than_or_equal_to: 0 }, if: :day_is_saturday?
+  validates :bonus, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :small_fault, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :moderate_fault, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
+  validates :serious_fault, numericality: { only_integer: true, greater_than_or_equal_to: 0 }
   validates :date_at, presence: true, uniqueness: { scope: :group, message: "El grupo ya tiene un registro en la misma fecha" }
   validates :group_id, presence: true
   validates :user_id, presence: true
@@ -73,8 +96,14 @@ class Score < ApplicationRecord
                  specialties_formation +
                  events_formation +
                  final_formation
-    
-    rest_points = small_fault + moderate_fault + serious_fault
+
+    rest_points = 0
+
+    if (serious_fault)
+      rest_points = add_points
+    else
+      rest_points = (small_fault * 10) + (moderate_fault * 20) 
+    end
     total = add_points - rest_points
 
     self.favor_score = add_points
