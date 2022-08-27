@@ -607,6 +607,8 @@ const FormScore = ({ featureFlags }) => {
           variant="contained"
           type="submit"
           disabled={!isDirty || !isValid}
+          fullWidth
+          size="large"
         >
           Crear
         </Button>

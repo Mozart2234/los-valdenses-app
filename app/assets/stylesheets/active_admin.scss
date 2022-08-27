@@ -8,7 +8,9 @@
 // $sidebar-width: 242px;
 
 // Active Admin's got SASS!
-
+@import "active_admin/mixins";
+@import "active_admin/base";
+@import '@activeadmin-plugins/active_admin_theme';
 @import 'wigu/active_admin_theme';
 
 // Overriding any non-variable Sass must be done after the fact.
