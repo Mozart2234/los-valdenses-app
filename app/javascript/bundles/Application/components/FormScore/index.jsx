@@ -71,7 +71,10 @@ const FormScore = ({ featureFlags }) => {
         isOpen: true,
         message: "Puntaje guardado",
       });
-      reset(DEFAULT_VALUES);
+      setTimeout(() => {
+        location.reload();
+      }, 1500)
+      
     } catch (error) {
       setSnackbar({
         status: "error",
