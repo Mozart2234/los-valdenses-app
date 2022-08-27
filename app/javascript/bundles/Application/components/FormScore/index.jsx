@@ -341,7 +341,7 @@ const FormScore = ({ featureFlags }) => {
           </Grid>
         )}
         <Grid container spacing={2}>
-          <Grid item xs={4}>
+          <Grid item xs={12} md={4}>
             <Controller
               name="initial_formation"
               control={control}
@@ -359,7 +359,7 @@ const FormScore = ({ featureFlags }) => {
               )}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} md={4}>
             <Controller
               name="unit_corner_formation"
               control={control}
@@ -377,7 +377,7 @@ const FormScore = ({ featureFlags }) => {
               )}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} md={4}>
             <Controller
               name="progressive_classes_formation"
               control={control}
@@ -397,7 +397,7 @@ const FormScore = ({ featureFlags }) => {
           </Grid>
         </Grid>
         <Grid container spacing={2}>
-          <Grid item xs={4}>
+          <Grid item xs={12} md={4}>
             <Controller
               name="specialties_formation"
               control={control}
@@ -415,7 +415,7 @@ const FormScore = ({ featureFlags }) => {
               )}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} md={4}>
             <Controller
               name="events_formation"
               control={control}
@@ -433,7 +433,7 @@ const FormScore = ({ featureFlags }) => {
               )}
             />
           </Grid>
-          <Grid item xs={4}>
+          <Grid item xs={12} md={4}>
             <Controller
               name="final_formation"
               control={control}
