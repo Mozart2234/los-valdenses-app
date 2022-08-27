@@ -63,6 +63,8 @@ gem "react_on_rails", "= 13.1"
 
 gem 'active_model_serializers', '~> 0.10.13'
 
+gem 'active_admin_theme'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem "debug", platforms: %i[ mri mingw x64_mingw ]

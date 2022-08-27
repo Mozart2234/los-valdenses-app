@@ -46,6 +46,7 @@ GEM
       erubi (~> 1.4)
       rails-dom-testing (~> 2.0)
       rails-html-sanitizer (~> 1.1, >= 1.2.0)
+    active_admin_theme (1.1.4)
     active_model_serializers (0.10.13)
       actionpack (>= 4.1, < 7.1)
       activemodel (>= 4.1, < 7.1)
@@ -313,6 +314,7 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
+  active_admin_theme
   active_model_serializers (~> 0.10.13)
   activeadmin (~> 2.13)
   annotate (~> 3.2)
