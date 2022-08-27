@@ -99,7 +99,7 @@ class Score < ApplicationRecord
 
     rest_points = 0
 
-    if (serious_fault)
+    if (serious_fault > 0)
       rest_points = add_points
     else
       rest_points = (small_fault * 10) + (moderate_fault * 20) 

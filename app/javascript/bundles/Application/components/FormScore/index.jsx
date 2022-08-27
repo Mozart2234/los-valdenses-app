@@ -14,28 +14,9 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import Snackbar from "@mui/material/Snackbar";
 import axios from "axios";
-import Slider from "@mui/material/Slider";
 
 const DEFAULT_VALUES = {
   group_id: undefined,
-  // pathfinder: "",
-  // counselor: "",
-  // flag: "",
-  // uniform: "",
-  // bible_study: "",
-  // initial_formation: "",
-  // unit_corner_formation: "",
-  // progressive_classes_formation: "",
-  // specialties_formation: "",
-  // events_formation: "",
-  // final_formation: "",
-  // event_1: "",
-  // event_2: "",
-  // event_3: "",
-  // bonus: "",
-  // small_fault: "",
-  // moderate_fault: "",
-  // serious_fault: "",
   date_at: new Date(),
 };
 
@@ -44,7 +25,7 @@ const FormScore = ({ featureFlags }) => {
   const [snackbar, setSnackbar] = useState({
     message: "",
     isOpen: false,
-    status: "",
+    status: "info",
   });
 
   const permitsCreateOutDate = featureFlags.includes("permits_create_out_date");
