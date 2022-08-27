@@ -34,7 +34,6 @@ const FormScore = ({ featureFlags }) => {
     control,
     handleSubmit,
     setError,
-    reset,
     watch,
     formState: { errors, isValid: isFormValid, isDirty },
   } = useForm({
@@ -63,9 +62,21 @@ const FormScore = ({ featureFlags }) => {
 
   const isValid = Object.keys(errors).length === 0 && isFormValid;
 
+  const cleanData = (data) => {
+    const obj = { ...data };
+    Object.keys(obj).forEach((key) => {
+      if (obj[key] === "") {
+        delete obj[key];
+      }
+    });
+
+    return obj;
+  };
+
   const onSubmit = async (data) => {
     try {
-      await axios.post("/v1/scores", { score: data });
+      const newData = cleanData(data);
+      await axios.post("/v1/scores", { score: newData });
       setSnackbar({
         status: "success",
         isOpen: true,
@@ -73,8 +84,7 @@ const FormScore = ({ featureFlags }) => {
       });
       setTimeout(() => {
         location.reload();
-      }, 1500)
-      
+      }, 1500);
     } catch (error) {
       setSnackbar({
         status: "error",
@@ -156,7 +166,6 @@ const FormScore = ({ featureFlags }) => {
               render={({ field: { ref, onChange, ...field } }) => (
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                   <DatePicker
-    
                     label="Fecha de registro"
                     onChange={(value) => {
                       onChange(value);
@@ -193,13 +202,17 @@ const FormScore = ({ featureFlags }) => {
                 <TextField
                   {...field}
                   error={!!errors?.pathfinder}
-  
                   fullWidth
                   label="Conquistadores"
                   type="number"
                   step="10"
                   helperText={errors?.pathfinder?.message}
-                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                  inputProps={{
+                    inputMode: "numeric",
+                    pattern: "[0-9]*",
+                    step: "10",
+                    min: 0,
+                  }}
                 />
               )}
             />
@@ -212,12 +225,16 @@ const FormScore = ({ featureFlags }) => {
                 <TextField
                   {...field}
                   error={!!errors?.counselor}
-  
                   fullWidth
                   label="Consejeros"
                   type="number"
                   helperText={errors?.counselor?.message}
-                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                  inputProps={{
+                    inputMode: "numeric",
+                    pattern: "[0-9]*",
+                    step: "10",
+                    min: 0,
+                  }}
                 />
               )}
             />
@@ -234,13 +251,17 @@ const FormScore = ({ featureFlags }) => {
               render={({ field }) => (
                 <TextField
                   {...field}
-  
                   error={!!errors?.flag}
                   helperText={errors?.flag?.message}
                   fullWidth
                   label="Bordon"
                   type="number"
-                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                  inputProps={{
+                    inputMode: "numeric",
+                    pattern: "[0-9]*",
+                    step: "10",
+                    min: 0,
+                  }}
                 />
               )}
             />
@@ -254,11 +275,15 @@ const FormScore = ({ featureFlags }) => {
                   {...field}
                   error={!!errors?.uniform}
                   helperText={errors?.uniform?.message}
-  
                   fullWidth
                   label="Uniforme"
                   type="number"
-                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                  inputProps={{
+                    inputMode: "numeric",
+                    pattern: "[0-9]*",
+                    step: "10",
+                    min: 0,
+                  }}
                 />
               )}
             />
@@ -271,13 +296,17 @@ const FormScore = ({ featureFlags }) => {
             render={({ field }) => (
               <TextField
                 {...field}
-
                 error={!!errors?.bible_study}
                 helperText={errors?.bible_study?.message}
                 fullWidth
                 label="Clases Biblicas"
                 type="number"
-                inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                inputProps={{
+                  inputMode: "numeric",
+                  pattern: "[0-9]*",
+                  step: "10",
+                  min: 0,
+                }}
               />
             )}
           />
@@ -291,13 +320,17 @@ const FormScore = ({ featureFlags }) => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-    
                     error={!!errors?.event_1}
                     helperText={errors?.event_1?.message}
                     fullWidth
                     label="Evento 1"
                     type="number"
-                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                    inputProps={{
+                      inputMode: "numeric",
+                      pattern: "[0-9]*",
+                      step: "10",
+                      min: 0,
+                    }}
                   />
                 )}
               />
@@ -309,13 +342,17 @@ const FormScore = ({ featureFlags }) => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-    
                     error={!!errors?.event_2}
                     helperText={errors?.event_2?.message}
                     fullWidth
                     label="Evento 2"
                     type="number"
-                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                    inputProps={{
+                      inputMode: "numeric",
+                      pattern: "[0-9]*",
+                      step: "10",
+                      min: 0,
+                    }}
                   />
                 )}
               />
@@ -327,13 +364,17 @@ const FormScore = ({ featureFlags }) => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-    
                     error={!!errors?.event_3}
                     helperText={errors?.event_3?.message}
                     fullWidth
                     label="Evento 3"
                     type="number"
-                    inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                    inputProps={{
+                      inputMode: "numeric",
+                      pattern: "[0-9]*",
+                      step: "10",
+                      min: 0,
+                    }}
                   />
                 )}
               />
@@ -348,13 +389,17 @@ const FormScore = ({ featureFlags }) => {
               render={({ field }) => (
                 <TextField
                   {...field}
-  
                   error={!!errors?.initial_formation}
                   helperText={errors?.initial_formation?.message}
                   fullWidth
                   label="Formacion inicial"
                   type="number"
-                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                  inputProps={{
+                    inputMode: "numeric",
+                    pattern: "[0-9]*",
+                    step: "10",
+                    min: 0,
+                  }}
                 />
               )}
             />
@@ -366,13 +411,17 @@ const FormScore = ({ featureFlags }) => {
               render={({ field }) => (
                 <TextField
                   {...field}
-  
                   error={!!errors?.unit_corner_formation}
                   helperText={errors?.unit_corner_formation?.message}
                   fullWidth
                   label="Formacion rincón de unidades"
                   type="number"
-                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                  inputProps={{
+                    inputMode: "numeric",
+                    pattern: "[0-9]*",
+                    step: "10",
+                    min: 0,
+                  }}
                 />
               )}
             />
@@ -384,13 +433,17 @@ const FormScore = ({ featureFlags }) => {
               render={({ field }) => (
                 <TextField
                   {...field}
-  
                   error={!!errors?.progressive_classes_formation}
                   helperText={errors?.progressive_classes_formation?.message}
                   fullWidth
                   label="Formacion clases progresivas"
                   type="number"
-                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                  inputProps={{
+                    inputMode: "numeric",
+                    pattern: "[0-9]*",
+                    step: "10",
+                    min: 0,
+                  }}
                 />
               )}
             />
@@ -404,13 +457,17 @@ const FormScore = ({ featureFlags }) => {
               render={({ field }) => (
                 <TextField
                   {...field}
-  
                   error={!!errors?.specialties_formation}
                   helperText={errors?.specialties_formation?.message}
                   fullWidth
                   label="Formacion para especialidades"
                   type="number"
-                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                  inputProps={{
+                    inputMode: "numeric",
+                    pattern: "[0-9]*",
+                    step: "10",
+                    min: 0,
+                  }}
                 />
               )}
             />
@@ -422,13 +479,17 @@ const FormScore = ({ featureFlags }) => {
               render={({ field }) => (
                 <TextField
                   {...field}
-  
                   error={!!errors?.events_formation}
                   helperText={errors?.events_formation?.message}
                   fullWidth
                   label="Formacion para eventos"
                   type="number"
-                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                  inputProps={{
+                    inputMode: "numeric",
+                    pattern: "[0-9]*",
+                    step: "10",
+                    min: 0,
+                  }}
                 />
               )}
             />
@@ -440,13 +501,17 @@ const FormScore = ({ featureFlags }) => {
               render={({ field }) => (
                 <TextField
                   {...field}
-  
                   error={!!errors?.final_formation}
                   helperText={errors?.final_formation?.message}
                   fullWidth
                   label="Formacion final"
                   type="number"
-                  inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+                  inputProps={{
+                    inputMode: "numeric",
+                    pattern: "[0-9]*",
+                    step: "10",
+                    min: 0,
+                  }}
                 />
               )}
             />
@@ -466,7 +531,12 @@ const FormScore = ({ featureFlags }) => {
               helperText={errors?.bonus?.message}
               label="Bonus Track"
               type="number"
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+              inputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+                step: "10",
+                min: 0,
+              }}
             />
           )}
         />
@@ -484,7 +554,12 @@ const FormScore = ({ featureFlags }) => {
               helperText={errors?.small_fault?.message}
               label="Faltas leves"
               type="number"
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+              inputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+                step: "10",
+                min: 0,
+              }}
             />
           )}
         />
@@ -499,7 +574,12 @@ const FormScore = ({ featureFlags }) => {
               helperText={errors?.moderate_fault?.message}
               label="Faltas moderadas"
               type="number"
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+              inputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+                step: "10",
+                min: 0,
+              }}
             />
           )}
         />
@@ -514,7 +594,12 @@ const FormScore = ({ featureFlags }) => {
               helperText={errors?.serious_fault?.message}
               label="Faltas graves"
               type="number"
-              inputProps={{ inputMode: "numeric", pattern: "[0-9]*", step: "10", min: 0 }}
+              inputProps={{
+                inputMode: "numeric",
+                pattern: "[0-9]*",
+                step: "10",
+                min: 0,
+              }}
             />
           )}
         />
