@@ -33,7 +33,7 @@ es:
         bonus: "Bonus Track"
         small_fault: "Faltas Pequeñas"    
         moderate_fault: "Faltas Moderadas"
-        serious_fault: "Faltas Moderadas"
+        serious_fault: "Faltas graves"
         favor_score: "Puntos a Favor"
         points_against: "Puntos en contra"
         total: "Total"
